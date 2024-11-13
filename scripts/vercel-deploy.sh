@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# 检查环境变量是否存在
-if [ -z "$DEFAULT_API_URL" ]; then
-  echo "DEFAULT_API_URL is not set"
-  exit 0
+# update config.js
+if [ ! -z "$DEFAULT_API_URL" ]; then
+  sed -i "s|DEFAULT_API_URL|DEFAULT_API_URL: '$DEFAULT_API_URL',//|g" ./public/config.js
 fi
 
-# 更新 config.js 文件
-sed -i "s|DEFAULT_API_URL|DEFAULT_API_URL: '$DEFAULT_API_URL'//|g" ./public/config.js
+if [ ! -z "$DEFAULT_API_PROTOCOL" ]; then
+  sed -i "s|DEFAULT_API_PROTOCOL|DEFAULT_API_PROTOCOL: '$DEFAULT_API_PROTOCOL',//|g" ./public/config.js
+fi
 
 echo "config.js updated"
