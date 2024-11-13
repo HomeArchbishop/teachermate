@@ -19,7 +19,6 @@ func InitDB() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	safeDB = &safeDBType{db: db}
 }
