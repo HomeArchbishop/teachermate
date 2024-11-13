@@ -26,6 +26,7 @@ func wsConnectHandler(w http.ResponseWriter, r *http.Request, conn *websocket.Co
 	webErr := service.SubscribeSignSignal(lessonId, studentId, connId)
 	if webErr != nil {
 		http.Error(w, webErr.Message, webErr.Code)
+		conn.Close()
 		return
 	}
 }
