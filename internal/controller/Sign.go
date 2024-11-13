@@ -8,10 +8,10 @@ import (
 )
 
 func signHandler(w http.ResponseWriter, r *http.Request) {
-	lesson_id := r.URL.Query().Get("lesson_id")
-	attendance_id := r.URL.Query().Get("attendance")
+	lessonId := r.URL.Query().Get("lesson_id")
+	attendanceId := r.URL.Query().Get("attendance")
 
-	connIdList, webErr := service.GetSubscriptionConns(lesson_id)
+	connIdList, webErr := service.GetSubscriptionConns(lessonId)
 	if webErr != nil {
 		http.Error(w, webErr.Message, webErr.Code)
 		return
@@ -20,7 +20,7 @@ func signHandler(w http.ResponseWriter, r *http.Request) {
 	connList.mux.Lock()
 	for _, connId := range connIdList {
 		if conn, ok := connList.conn[connId]; ok {
-			conn.WriteMessage(websocket.TextMessage, []byte(attendance_id))
+			conn.WriteMessage(websocket.TextMessage, []byte(attendanceId))
 		}
 	}
 	connList.mux.Unlock()
