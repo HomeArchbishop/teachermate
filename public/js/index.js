@@ -8,6 +8,7 @@ const canvasElement = document.createElement('canvas')
 const ctx = canvasElement.getContext('2d')
 
 const apiUrl = config.DEFAULT_API_URL
+const apiProtocol = config.DEFAULT_API_PROTOCOL
 
 navigator.mediaDevices
   .getUserMedia({ video: true })
@@ -59,7 +60,13 @@ const sendRequest = async (link) => {
 
   alreadySignedLink.add(link + lessonId)
 
-  const response = await fetch(apiUrl + `/api/sign?lesson_id=${lessonId}&attendance=${link}`, {
+  const url = new URL()
+  url.protocol = apiProtocol + ":"
+  url.host = apiUrl
+  url.pathname = "/api/sign"
+  url.searchParams.append('lesson_id', lessonId)
+  url.searchParams.append('attendance', link)
+  const response = await fetch(url.href, {
     method: 'GET'
   })
   return response.json()
