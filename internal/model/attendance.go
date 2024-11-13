@@ -9,7 +9,10 @@ func AddSubscription(lessonId, studentId, connId string) error {
 	defer safeDB.mux.Unlock()
 
 	key := keySubscription(lessonId, studentId)
-	safeDB.db.Put([]byte(key), []byte(connId), nil)
+	err := safeDB.db.Put([]byte(key), []byte(connId), nil)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
