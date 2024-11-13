@@ -32,6 +32,9 @@ func main() {
 	model.InitDB()
 	defer model.CloseDB()
 
+	fs := http.FileServer(http.Dir("./public"))
+
+	http.Handle("/", fs)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		controller.WsHandler(w, r)
 	})
