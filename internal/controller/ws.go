@@ -31,7 +31,7 @@ func wsConnectHandler(w http.ResponseWriter, r *http.Request, conn *websocket.Co
 	}
 }
 
-func wsDisconnectHandler(w http.ResponseWriter, r *http.Request, connId string) {
+func wsDisconnectHandler(r *http.Request, connId string) {
 	connList.mux.Lock()
 	delete(connList.conn, connId)
 	connList.mux.Unlock()
@@ -39,9 +39,6 @@ func wsDisconnectHandler(w http.ResponseWriter, r *http.Request, connId string) 
 	lessonId := r.URL.Query().Get("lesson_id")
 	studentId := r.URL.Query().Get("student_id")
 
-	webErr := service.CancelSubscription(lessonId, studentId)
-	if webErr != nil {
-		http.Error(w, webErr.Message, webErr.Code)
-		return
-	}
+	// no need to check error
+	service.CancelSubscription(lessonId, studentId)
 }

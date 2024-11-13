@@ -33,18 +33,14 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		for {
 			// ping
-			time.Sleep(30 * time.Second)
+			time.Sleep(5 * time.Second)
 			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				wsDisconnectHandler(r, connId)
 				conn.Close()
 				return
 			}
 		}
 	}()
-
-	conn.SetCloseHandler(func(code int, text string) error {
-		wsDisconnectHandler(w, r, connId)
-		return nil
-	})
 
 	wsConnectHandler(w, r, conn, connId)
 }
