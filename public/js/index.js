@@ -60,7 +60,7 @@ const sendRequest = async (link) => {
 
   alreadySignedLink.add(link + lessonId)
 
-  const url = new URL()
+  const url = new URL('https://example.com')
   url.protocol = apiProtocol + ":"
   url.host = apiUrl
   url.pathname = "/api/sign"
