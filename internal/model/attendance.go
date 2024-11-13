@@ -44,6 +44,20 @@ func RemoveSubscription(lessonId, studentId string) error {
 	return nil
 }
 
+func RemoveAllSubscription() error {
+	safeDB.mux.Lock()
+	defer safeDB.mux.Unlock()
+
+	prefix := prefixSubscription4All()
+	iter := safeDB.db.NewIterator(util.BytesPrefix([]byte(prefix)), nil)
+
+	for iter.Next() {
+		safeDB.db.Delete(iter.Key(), nil)
+	}
+
+	return nil
+}
+
 func GetSubscription4Lesson(lessonId string) ([]string, error) {
 	safeDB.mux.Lock()
 	defer safeDB.mux.Unlock()

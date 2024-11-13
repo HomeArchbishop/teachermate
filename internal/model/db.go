@@ -21,6 +21,8 @@ func InitDB() {
 	}
 
 	safeDB = &safeDBType{db: db}
+
+	RemoveAllSubscription()
 }
 
 func CloseDB() {
@@ -33,4 +35,8 @@ func keySubscription(lessonId, studentId string) string {
 
 func prefixSubscription4Lesson(lessonId string) string {
 	return "subscription:" + lessonId + ":"
+}
+
+func prefixSubscription4All() string {
+	return "subscription:"
 }
