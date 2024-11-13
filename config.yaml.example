@@ -1,0 +1,5 @@
+server:
+  port: 8080
+
+client:
+  server: api.example.com
