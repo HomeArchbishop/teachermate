@@ -20,6 +20,9 @@ func signHandler(w http.ResponseWriter, r *http.Request) {
 	connList.mux.Lock()
 	for _, connId := range connIdList {
 		if conn, ok := connList.conn[connId]; ok {
+			// no need to check error,
+			// Because PingMessage will check the connection status
+			// and close the connection if it is not available.
 			conn.WriteMessage(websocket.TextMessage, []byte(attendanceId))
 		}
 	}
