@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+video#video {
+  width: 100vw;
+  height: 65vh;
+  object-fit: cover;
+  border-bottom: solid 1px black;
+}
+
+.container {
+  width: 100vw;
+  height: 30vh;
+  padding: 0 10vw;
+}
+
+.container .msg {
+  width: 100%;
+  height: 5vh;
+}
+
+.container .msg #msgTipper {
+  text-align: center;
+}
+
+.container .input-container .input-group {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  width: 100%;
+  padding: 1rem;
+}
+
+.container .input-container .input-group span {
+  font-size: 0.8rem;
+}
