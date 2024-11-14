@@ -21,7 +21,7 @@ func wsConnectHandler(w http.ResponseWriter, r *http.Request, conn *websocket.Co
 	connList.mux.Unlock()
 
 	lessonId := r.URL.Query().Get("lesson_id")
-	studentId := r.URL.Query().Get("student_id")
+	studentId := connId
 
 	webErr := service.SubscribeSignSignal(lessonId, studentId, connId)
 	if webErr != nil {
@@ -37,7 +37,7 @@ func wsDisconnectHandler(r *http.Request, connId string) {
 	connList.mux.Unlock()
 
 	lessonId := r.URL.Query().Get("lesson_id")
-	studentId := r.URL.Query().Get("student_id")
+	studentId := connId
 
 	// no need to check error
 	service.CancelSubscription(lessonId, studentId)
