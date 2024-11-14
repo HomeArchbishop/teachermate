@@ -7,7 +7,7 @@ const video = document.getElementById('video')
 const canvasElement = document.createElement('canvas')
 const ctx = canvasElement.getContext('2d')
 
-const apiUrl = config.DEFAULT_API_URL
+const apiUrl = config.DEFAULT_API_URL || window.location.host
 const apiProtocol = config.DEFAULT_API_PROTOCOL
 
 navigator.mediaDevices
@@ -60,14 +60,14 @@ const sendRequest = async (link) => {
 
   alreadySignedLink.add(link + lessonId)
 
-  const url = new URL('https://example.com')
-  url.protocol = apiProtocol + ":"
-  url.host = apiUrl
-  url.pathname = "/api/sign"
+  const url = new URL(`${apiProtocol}://${apiUrl.replace(/\/$/, '')}/api/sign?lesson_id=${lessonId}&attendance=${link}`)
   url.searchParams.append('lesson_id', lessonId)
   url.searchParams.append('attendance', link)
-  const response = await fetch(url.href, {
-    method: 'GET'
-  })
+  const scriptDOM = document.createElement('script')
+  scriptDOM.src = url.href
+  document.body.appendChild(scriptDOM)
+  // const response = await fetch(url.href, {
+  //   method: 'GET'
+  // })
   return response.json()
 }
