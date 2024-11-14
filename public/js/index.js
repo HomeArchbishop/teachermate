@@ -63,11 +63,11 @@ const sendRequest = async (link) => {
   const url = new URL(`${apiProtocol}://${apiUrl.replace(/\/$/, '')}/api/sign?lesson_id=${lessonId}&attendance=${link}`)
   url.searchParams.append('lesson_id', lessonId)
   url.searchParams.append('attendance', link)
-  const scriptDOM = document.createElement('script')
-  scriptDOM.src = url.href
-  document.body.appendChild(scriptDOM)
-  // const response = await fetch(url.href, {
-  //   method: 'GET'
-  // })
+  // const scriptDOM = document.createElement('script')
+  // scriptDOM.src = url.href
+  // document.body.appendChild(scriptDOM)
+  const response = await fetch(url.href, {
+    method: 'GET'
+  })
   return response.json()
 }
