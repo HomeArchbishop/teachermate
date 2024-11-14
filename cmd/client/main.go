@@ -23,14 +23,10 @@ type Config struct {
 
 var config Config
 
-var (
-	lessonId  string
-	studentId string
-)
+var lessonId  string
 
 func init() {
 	flag.StringVar(&lessonId, "lesson", "", "Lesson ID")
-	flag.StringVar(&studentId, "student", "", "Student ID")
 }
 
 func main() {
@@ -55,21 +51,13 @@ func main() {
 			fmt.Println("lesson ID cannot be empty. Please retry.")
 		}
 	}
-	for studentId == "" {
-		fmt.Print("Enter student ID: ")
-		studentId, _ = reader.ReadString('\n')
-		studentId = strings.TrimSpace(studentId)
-		if studentId == "" {
-			fmt.Println("studentId cannot be empty. Please retry.")
-		}
-	}
 
 	wsclient.RegisterHandler("sign_signal", func(msg *shared.SignSignalMsgType) {
 		doSignOnce(msg.SignUrl)
 	})
 
 	// this is a blocking call
-	wsclient.StartClient(config.Client.Server, lessonId, studentId)
+	wsclient.StartClient(config.Client.Server, lessonId)
 
 }
 

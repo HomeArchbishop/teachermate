@@ -10,13 +10,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func StartClient(serverHost, lessonId, studentId string) {
+func StartClient(serverHost, lessonId string) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
 	query := url.Values{}
 	query.Set("lesson_id", lessonId)
-	query.Set("student_id", studentId)
 	u := url.URL{
 		Scheme:   "ws",
 		Host:     serverHost,
