@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            os-name: linux-amd64
+            build-client: false
+            build-file-suffix: ""
+          - os: macos-latest
+            os-name: darwin-amd64
+            build-client: false
+            build-file-suffix: ""
+          - os: windows-latest
+            os-name: windows-amd64
+            build-client: true
+            build-file-suffix: ".exe"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go 1.22.5
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.22.5
+
+    - name: Build server
+      run: sh ./scripts/build-server.sh
+
+    - name: Build client
+      if: matrix.build-client
+      run: sh ./scripts/build-client.sh
+
+    - name: Upload Server Release Asset
+      uses: actions/upload-artifact@v4
+      with:
+        name: server-${{ matrix.os-name }}
+        path: ./build/server${{ matrix.build-file-suffix }}
+
+    - name: Upload Client Release Asset
+      if: matrix.build-client
+      uses: actions/upload-artifact@v4
+      with:
+        name: client-${{ matrix.os-name }}
+        path: ./build/client${{ matrix.build-file-suffix }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Download Server Release Assets
+      uses: actions/download-artifact@v4
+
+    - name: Upload Server Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: server-linux-amd64/server
+        asset_name: server-${{ github.ref_name }}-linux-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Server Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: server-darwin-amd64/server
+        asset_name: server-${{ github.ref_name }}-darwin-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Server Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: server-windows-amd64/server.exe
+        asset_name: server-${{ github.ref_name }}-windows-amd64.exe
+        asset_content_type: application/octet-stream
+
+    - name: Upload Client Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: client-windows-amd64/client.exe
+        asset_name: client-${{ github.ref_name }}-windows-amd64.exe
+        asset_content_type: application/octet-stream
