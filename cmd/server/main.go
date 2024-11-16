@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/homearchbishop/teachermate-auto/internal/controller"
@@ -19,9 +22,14 @@ type Config struct {
 var config Config
 
 func main() {
+	exePath, xerr := os.Executable()
+	if xerr != nil {
+		fmt.Println("Error:", xerr)
+		return
+	}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(filepath.Dir(exePath))
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
