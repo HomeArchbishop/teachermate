@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/homearchbishop/teachermate-auto/internal/client/robot"
@@ -23,16 +24,21 @@ type Config struct {
 
 var config Config
 
-var lessonId  string
+var lessonId string
 
 func init() {
 	flag.StringVar(&lessonId, "lesson", "", "Lesson ID")
 }
 
 func main() {
+	exePath, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath(filepath.Dir(exePath))
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
