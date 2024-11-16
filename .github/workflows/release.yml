@@ -14,14 +14,17 @@ jobs:
           - os: ubuntu-latest
             os-name: linux-amd64
             build-client: false
+            build-config: true
             build-file-suffix: ""
           - os: macos-latest
             os-name: darwin-amd64
             build-client: false
+            build-config: false
             build-file-suffix: ""
           - os: windows-latest
             os-name: windows-amd64
             build-client: true
+            build-config: false
             build-file-suffix: ".exe"
 
     runs-on: ${{ matrix.os }}
@@ -42,6 +45,10 @@ jobs:
       if: matrix.build-client
       run: sh ./scripts/build-client.sh
 
+    - name: Build config
+      if: matrix.build-config
+      run: sh ./scripts/build-config.sh --server-port=${{ vars.SERVER_PORT }} --client-api-host=${{ vars.CLIENT_API_HOST }}
+
     - name: Upload Server Release Asset
       uses: actions/upload-artifact@v4
       with:
@@ -54,6 +61,13 @@ jobs:
       with:
         name: client-${{ matrix.os-name }}
         path: ./build/client${{ matrix.build-file-suffix }}
+
+    - name: Upload Config Release Asset
+      if: matrix.build-config
+      uses: actions/upload-artifact@v4
+      with:
+        name: config
+        path: ./build/config.yaml
 
   release:
     needs: build
@@ -76,6 +90,16 @@ jobs:
 
     - name: Download Server Release Assets
       uses: actions/download-artifact@v4
+
+    - name: Upload Config Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TEACHERMATE_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: config/config.yaml
+        asset_name: config.yaml
+        asset_content_type: application/octet-stream
 
     - name: Upload Server Release Asset
       uses: actions/upload-release-asset@v1
